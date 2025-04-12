@@ -12,7 +12,12 @@ export const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
             <Shield className="w-8 h-8 text-purple-600" />
-            <span className="text-xl font-bold text-purple-900">SafeGuard</span>
+            <div>
+             <span className="text-xl font-bold text-purple-900">SAFER HER</span>
+             <div className="text-xs text-gray-600 text-purple-900">Because every woman deserves to feel safe</div>
+            </div>
+
+            
           </Link>
 
           <div className="flex items-center space-x-4">

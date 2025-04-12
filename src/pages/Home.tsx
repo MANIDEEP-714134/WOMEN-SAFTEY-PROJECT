@@ -1,6 +1,39 @@
 import React from 'react';
 import { Shield, Phone, MapPin, Bell } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from '../lib/firebase'; // Firebase setup with firestore()
 export const Home = () => {
+
+  const firstLoad = useRef(true); // avoids showing alerts for old data on load
+
+  useEffect(() => {
+    // Listen to real-time updates from the "emergencies" collection
+    const unsub = onSnapshot(collection(db, "emergencies"), (snapshot) => {
+      
+      // Ignore old docs when first loading the page
+      if (firstLoad.current) {
+        firstLoad.current = false;
+        return;
+      }
+
+      // Handle new documents (added)
+      snapshot.docChanges().forEach(change => {
+        if (change.type === "added") {
+          const data = change.doc.data();
+          const status = data.status?.stringValue || data.status;
+          const timestamp = data.timestamp?.timestampValue || data.timestamp;
+          
+          // Show an alert with the data
+          alert(`🚨 Emergency!\n\nStatus: ${status}\nTime: ${timestamp}`);
+        }
+      });
+    });
+
+    // Cleanup the listener when the component unmounts
+    return () => unsub();
+  }, []);
+  
   return (
     <div className="container mx-auto px-4 py-8">
       <section className="text-center mb-16">
@@ -68,3 +101,7 @@ const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode; titl
     <p className="text-gray-600">{description}</p>
   </div>
 );
+
+
+
+
